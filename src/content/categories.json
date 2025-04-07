@@ -1,0 +1,13 @@
+[
+  { "slug": "converter", "icon": "ArrowLeftRight" },
+  { "slug": "design", "icon": "Palette" },
+  { "slug": "formatter", "icon": "FileCode" },
+  { "slug": "base64", "icon": "Braces" },
+  { "slug": "decoder", "icon": "ArrowLeftRight" },
+  { "slug": "encoder", "icon": "ArrowLeftRight" },
+  { "slug": "timestamp", "icon": "Clock" },
+  { "slug": "time", "icon": "Clock" },
+  { "slug": "jwt", "icon": "ShieldCheck" },
+  { "slug": "security", "icon": "ShieldCheck" },
+  { "slug": "generator", "icon": "Cog" }
+]

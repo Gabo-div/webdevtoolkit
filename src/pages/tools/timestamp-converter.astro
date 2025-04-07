@@ -1,0 +1,103 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Label from "@/components/Label.astro";
+import Input from "@/components/Input.astro";
+---
+
+<ToolLayout slug="timestamp-converter">
+  <div class="flex flex-1 flex-col space-y-6">
+    <div class="grid gap-2">
+      <Label for="input">Timestamp (milliseconds)</Label>
+      <Input
+        placeholder="Enter timestamp to convert"
+        id="input"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="bg-border h-[1px] w-full"></div>
+
+    <h3 class="text-xl font-bold">Result</h3>
+
+    <div class="grid gap-2">
+      <Label for="timestamps">Seconds</Label>
+      <Input
+        id="timestamps"
+        placeholder="Timestamp result (seconds)"
+        readonly
+        class="bg-zinc-900"
+      />
+    </div>
+
+    <div class="grid gap-2">
+      <Label for="timestampm">Milliseconds</Label>
+      <Input
+        id="timestampm"
+        placeholder="Timestamp result (milliseconds)"
+        readonly
+        class="bg-zinc-900"
+      />
+    </div>
+
+    <div class="grid gap-2">
+      <Label for="gmt">GMT</Label>
+      <Input id="gmt" placeholder="GMT result" readonly class="bg-zinc-900" />
+    </div>
+
+    <div class="grid gap-2">
+      <Label for="timezone">Your Timezone</Label>
+      <Input
+        id="timezone"
+        placeholder="Timezone result"
+        readonly
+        class="bg-zinc-900"
+      />
+    </div>
+    <div class="grid gap-2">
+      <Label for="relative">Relative</Label>
+      <Input
+        id="relative"
+        placeholder="Relative result"
+        readonly
+        class="bg-zinc-900"
+      />
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  import { format, formatDistance } from "date-fns";
+
+  const input = document.getElementById("input") as HTMLInputElement;
+
+  const timestamps = document.getElementById("timestamps") as HTMLInputElement;
+  const timestampm = document.getElementById("timestampm") as HTMLInputElement;
+  const gmt = document.getElementById("gmt") as HTMLInputElement;
+  const timezone = document.getElementById("timezone") as HTMLInputElement;
+  const relative = document.getElementById("relative") as HTMLInputElement;
+
+  input.addEventListener("input", () => {
+    try {
+      const value = parseInt(input.value);
+
+      const date = new Date(value);
+      const gmtDate = new Date(
+        date.valueOf() + date.getTimezoneOffset() * 60 * 1000,
+      );
+
+      timestamps.value = format(date, "t");
+      timestampm.value = format(date, "T");
+      gmt.value = format(gmtDate, "PPPPpppp");
+      timezone.value = format(date, "PPPPpppp");
+      relative.value = formatDistance(date, Date.now());
+    } catch (e) {
+      console.log(e);
+
+      timestamps.value = "Invalid Date";
+      timestampm.value = "Invalid Date";
+      gmt.value = "Invalid Date";
+      timezone.value = "Invalid Date";
+      relative.value = "Invalid Date";
+    }
+  });
+</script>

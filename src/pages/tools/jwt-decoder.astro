@@ -1,0 +1,69 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Label from "@/components/Label.astro";
+import Textarea from "@/components/Textarea.astro";
+---
+
+<ToolLayout slug="jwt-decoder">
+  <div class="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">
+    <div class="flex flex-col gap-2">
+      <Label for="input">JWT Token</Label>
+      <Textarea class="flex-1" placeholder="Enter your JWT token" id="input" />
+    </div>
+
+    <div class="grid gap-4">
+      <div class="grid gap-2">
+        <Label for="header-output">Header</Label>
+        <Textarea
+          rows={5}
+          readonly
+          placeholder="Decoded Header"
+          id="header-output"
+          class="bg-zinc-900"
+        />
+      </div>
+
+      <div class="grid gap-2">
+        <Label for="payload-output">Header</Label>
+        <Textarea
+          rows={5}
+          readonly
+          placeholder="Decoded Payload"
+          id="payload-output"
+          class="bg-zinc-900"
+        />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { jwtDecode } from "jwt-decode";
+
+    const input = document.getElementById("input") as HTMLTextAreaElement;
+    const headerOutput = document.getElementById(
+      "header-output",
+    ) as HTMLTextAreaElement;
+    const payloadOutput = document.getElementById(
+      "payload-output",
+    ) as HTMLTextAreaElement;
+
+    input.addEventListener("input", () => {
+      const token = input.value;
+      if (token) {
+        try {
+          const decodedPayload = jwtDecode(token);
+          const decodedHeader = jwtDecode(token, { header: true });
+
+          headerOutput.value = JSON.stringify(decodedHeader, null, 2);
+          payloadOutput.value = JSON.stringify(decodedPayload, null, 2);
+        } catch (error) {
+          headerOutput.value = "Invalid JWT token";
+          payloadOutput.value = "Invalid JWT token";
+        }
+      } else {
+        headerOutput.value = "";
+        payloadOutput.value = "";
+      }
+    });
+  </script>
+</ToolLayout>

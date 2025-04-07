@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "json-formatter",
+    "name": "JSON Formatter",
+    "description": "Formats, beautifies, and minifies data in JSON (JavaScript Object Notation) format, making it easier to read, edit, and debug.",
+    "categories": ["formatter"]
+  },
+  {
+    "slug": "csv-to-json",
+    "name": "CSV to JSON Converter",
+    "description": "Converts tabular data in CSV (Comma Separated Values) format to the hierarchical structure of JSON (JavaScript Object Notation), ideal for integrating data into web applications and APIs.",
+    "categories": ["converter"]
+  },
+  {
+    "slug": "json-yaml-converter",
+    "name": "JSON/YAML Converter",
+    "description": "Enables bidirectional conversion between JSON and YAML (YAML Ain't Markup Language) data serialization formats, offering flexibility in managing configuration files and data.",
+    "categories": ["converter"]
+  },
+  {
+    "slug": "base64-encoder-decoder",
+    "name": "Base64 Encoder/Decoder",
+    "description": "Encodes text to Base64 format, an ASCII representation of binary data, and vice versa, useful for transmitting data over mediums that only support text.",
+    "categories": ["base64", "decoder", "encoder"]
+  },
+  {
+    "slug": "timestamp-converter",
+    "name": "Timestamp Converter",
+    "description": "Converts between numeric timestamps and human-readable dates, facilitating the understanding and manipulation of time records in computer systems.",
+    "categories": ["timestamp", "converter", "time"]
+  },
+  {
+    "slug": "jwt-decoder",
+    "name": "JWT Decoder",
+    "description": "Decodes and inspects the content of JSON Web Tokens (JWTs), a standard for securely transmitting information between parties as a signed JSON object.",
+    "categories": ["jwt", "decoder", "security"]
+  },
+  {
+    "slug": "token-generator",
+    "name": "Token Generator",
+    "description": " Generates secure random tokens, useful for various applications such as temporary passwords, API keys, or unique identifiers.",
+    "categories": ["generator", "security"]
+  },
+  {
+    "slug": "color-converter",
+    "name": "Color Converter",
+    "description": "Converts colors between different formats (e.g., HEX, RGB, HSL), enabling designers and developers to work with color values in their preferred format.",
+    "categories": ["converter", "design"]
+  }
+]

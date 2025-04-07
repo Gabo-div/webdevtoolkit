@@ -1,0 +1,20 @@
+---
+import { Sun, Moon } from "@lucide/astro";
+---
+
+<button class="inline-flex cursor-pointer hover:opacity-75" id="mode-toggle">
+  <Sun
+    class="size-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
+  />
+  <Moon
+    class="absolute size-5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
+  />
+  <span class="sr-only">Toggle theme</span>
+</button>
+
+<script>
+  const btn = document.querySelector("#mode-toggle") as HTMLButtonElement;
+  btn.addEventListener("click", () => {
+    document.documentElement.classList.toggle("dark");
+  });
+</script>

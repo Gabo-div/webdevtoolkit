@@ -1,0 +1,132 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Label from "@/components/Label.astro";
+import Input from "@/components/Input.astro";
+import Checkbox from "@/components/Checkbox.astro";
+import Button from "@/components/Button.astro";
+
+import { RefreshCw, Clipboard } from "@lucide/astro";
+---
+
+<ToolLayout slug="token-generator">
+  <div class="flex flex-1 flex-col space-y-6">
+    <div class="grid gap-2">
+      <Label for="length">Length</Label>
+      <Input value={32} type="number" id="length" />
+    </div>
+
+    <div class="flex items-center gap-2">
+      <Checkbox id="uppercase" checked />
+      <Label for="uppercase">Uppercase</Label>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <Checkbox id="lowercase" checked />
+      <Label for="lowercase">Lowercase</Label>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <Checkbox id="numbers" checked />
+      <Label for="numbers">Numbers</Label>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <Checkbox id="symbols" checked />
+      <Label for="symbols">Symbols (!@#$%^&*)</Label>
+    </div>
+
+    <div class="bg-border h-[1px] w-full"></div>
+
+    <div class="grid gap-2">
+      <Label for="result">Result</Label>
+      <div class="flex items-center gap-2">
+        <Input id="result" placeholder="Result" readonly class="bg-zinc-900" />
+        <Button id="generate"><RefreshCw /></Button>
+        <Button id="copy"><Clipboard /></Button>
+      </div>
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const lengthInput = document.querySelector("#length") as HTMLInputElement;
+  const uppercaseInput = document.querySelector(
+    "#uppercase",
+  ) as HTMLInputElement;
+  const lowercaseInput = document.querySelector(
+    "#lowercase",
+  ) as HTMLInputElement;
+  const numbersInput = document.querySelector("#numbers") as HTMLInputElement;
+  const symbolsInput = document.querySelector("#symbols") as HTMLInputElement;
+
+  const resultInput = document.querySelector("#result") as HTMLInputElement;
+  const generateButton = document.querySelector(
+    "#generate",
+  ) as HTMLButtonElement;
+  const copyButton = document.querySelector("#copy") as HTMLButtonElement;
+
+  const inputs = [
+    lengthInput,
+    uppercaseInput,
+    lowercaseInput,
+    numbersInput,
+    symbolsInput,
+  ];
+
+  const uppercaseChartset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercaseCharset = "abcdefghijklmnopqrstuvwxyz";
+  const numbersCharset = "0123456789";
+  const symbolsChatset = "!@#$%^&*";
+
+  const generateToken = () => {
+    const length = parseInt(lengthInput.value);
+    const uppercase = uppercaseInput.checked;
+    const lowercase = lowercaseInput.checked;
+    const numbers = numbersInput.checked;
+    const symbols = symbolsInput.checked;
+
+    let charset = "";
+
+    if (uppercase) {
+      charset += uppercaseChartset;
+    }
+
+    if (lowercase) {
+      charset += lowercaseCharset;
+    }
+
+    if (numbers) {
+      charset += numbersCharset;
+    }
+
+    if (symbols) {
+      charset += symbolsChatset;
+    }
+
+    if (!charset) {
+      resultInput.value = "Select at least one charset";
+      return;
+    }
+
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      result += charset[randomIndex];
+    }
+
+    resultInput.value = result;
+  };
+
+  inputs.forEach((input) => {
+    input.addEventListener("input", generateToken);
+  });
+
+  generateButton.addEventListener("click", generateToken);
+
+  copyButton.addEventListener("click", () => {
+    navigator.clipboard.writeText(resultInput.value);
+  });
+
+  generateToken();
+</script>

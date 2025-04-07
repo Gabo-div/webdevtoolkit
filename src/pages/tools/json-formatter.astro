@@ -1,0 +1,61 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Label from "@/components/Label.astro";
+import Textarea from "@/components/Textarea.astro";
+import Button from "@/components/Button.astro";
+---
+
+<ToolLayout slug="json-formatter">
+  <div class="flex flex-1 flex-col space-y-4">
+    <div class="grid gap-2">
+      <Label for="input">Input JSON</Label>
+      <Textarea
+        rows={5}
+        placeholder="Enter text to encode or decode..."
+        id="input"
+      />
+    </div>
+
+    <div class="flex items-center gap-2">
+      <Button id="format">Format</Button>
+      <Button id="minify">Minify</Button>
+    </div>
+
+    <div class="grid gap-2">
+      <Label for="output">Formatted JSON</Label>
+      <Textarea
+        rows={5}
+        readonly
+        placeholder="Result"
+        id="output"
+        class="bg-zinc-900"
+      />
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const input = document.getElementById("input") as HTMLInputElement;
+  const output = document.getElementById("output") as HTMLInputElement;
+
+  const formatButton = document.getElementById("format") as HTMLButtonElement;
+  const minifyButton = document.getElementById("minify") as HTMLButtonElement;
+
+  formatButton.addEventListener("click", () => {
+    try {
+      const json = JSON.parse(input.value);
+      output.value = JSON.stringify(json, null, 2);
+    } catch (error) {
+      output.value = "Invalid JSON";
+    }
+  });
+
+  minifyButton.addEventListener("click", () => {
+    try {
+      const json = JSON.parse(input.value);
+      output.value = JSON.stringify(json);
+    } catch (error) {
+      output.value = "Invalid JSON";
+    }
+  });
+</script>

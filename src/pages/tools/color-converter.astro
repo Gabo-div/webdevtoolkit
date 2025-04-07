@@ -1,0 +1,89 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Label from "@/components/Label.astro";
+import Input from "@/components/Input.astro";
+---
+
+<ToolLayout slug="color-converter">
+  <div class="flex flex-1 flex-col space-y-6">
+    <div class="grid gap-2">
+      <Label for="preview">Preview Color</Label>
+      <Input type="color" id="preview" />
+    </div>
+    <div class="grid gap-2">
+      <Label for="hex">Hex Color</Label>
+      <Input id="hex" placeholder="#000000" />
+    </div>
+    <div class="grid gap-2">
+      <Label for="rgb">RGB Color</Label>
+      <Input id="rgb" placeholder="rgb(0,0,0)" />
+    </div>
+    <div class="grid gap-2">
+      <Label for="hsl">HSL Color</Label>
+      <Input id="hsl" placeholder="hsl(0,0%,0%)" />
+    </div>
+    <div class="grid gap-2">
+      <Label for="lab">Lab Color</Label>
+      <Input id="lab" placeholder="lab(0,0,0)" />
+    </div>
+    <div class="grid gap-2">
+      <Label for="lch">LCH Color</Label>
+      <Input id="lch" placeholder="lch(0,0,0)" />
+    </div>
+    <div class="grid gap-2">
+      <Label for="oklab">OKLab Color</Label>
+      <Input id="oklab" placeholder="oklab(0,0,0)" />
+    </div>
+    <div class="grid gap-2">
+      <Label for="oklch">OKLCH Color</Label>
+      <Input id="oklch" placeholder="oklch(0,0,0)" />
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  import chroma from "chroma-js";
+
+  const previewInput = document.querySelector("#preview") as HTMLInputElement;
+  const hexInput = document.querySelector("#hex") as HTMLInputElement;
+  const rgbInput = document.querySelector("#rgb") as HTMLInputElement;
+  const hslInput = document.querySelector("#hsl") as HTMLInputElement;
+  const labInput = document.querySelector("#lab") as HTMLInputElement;
+  const lchInput = document.querySelector("#lch") as HTMLInputElement;
+  const oklabInput = document.querySelector("#oklab") as HTMLInputElement;
+  const oklchInput = document.querySelector("#oklch") as HTMLInputElement;
+
+  const inputs = [
+    previewInput,
+    hexInput,
+    rgbInput,
+    hslInput,
+    labInput,
+    lchInput,
+    oklabInput,
+    oklchInput,
+  ] as HTMLInputElement[];
+
+  const updateColors = (str: string) => {
+    const color = chroma.valid(str) ? chroma(str) : chroma("#000000");
+
+    previewInput.value = color.hex();
+
+    hexInput.value = color.hex();
+    rgbInput.value = color.css("rgb");
+    hslInput.value = color.css("hsl");
+    labInput.value = color.css("lab");
+    lchInput.value = color.css("lch");
+    oklabInput.value = color.css("oklab");
+    oklchInput.value = color.css("oklch");
+  };
+
+  inputs.forEach((input) => {
+    input.addEventListener("input", (e) => {
+      const value = (e.target as HTMLInputElement).value;
+      updateColors(value);
+    });
+  });
+
+  updateColors(chroma.random().hex());
+</script>

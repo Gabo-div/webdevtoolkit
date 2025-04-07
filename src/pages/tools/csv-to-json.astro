@@ -1,0 +1,66 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Label from "@/components/Label.astro";
+import Textarea from "@/components/Textarea.astro";
+import Button from "@/components/Button.astro";
+---
+
+<ToolLayout slug="csv-to-json">
+  <div class="flex flex-1 flex-col space-y-4">
+    <div class="grid gap-2">
+      <Label for="input">CSV Input</Label>
+      <Textarea
+        rows={5}
+        placeholder="Enter CSV to convert to JSON..."
+        id="input"
+      />
+    </div>
+
+    <div class="flex items-center gap-2">
+      <Button id="convert">Convert to JSON</Button>
+    </div>
+
+    <div class="grid gap-2">
+      <Label for="output">JSON Output</Label>
+      <Textarea rows={5} readonly placeholder="JSON Result" id="output" />
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const input = document.getElementById("input") as HTMLInputElement;
+  const output = document.getElementById("output") as HTMLInputElement;
+
+  const button = document.getElementById("convert") as HTMLButtonElement;
+
+  button.addEventListener("click", () => {
+    const csv = input.value;
+    const lines = csv.split("\n");
+    const result: any[] = [];
+
+    const headers = lines[0].split(",");
+
+    for (let i = 1; i < lines.length; i++) {
+      const obj: any = {};
+      const currentline = lines[i].split(",");
+
+      for (let j = 0; j < headers.length; j++) {
+        let currentValue = currentline[j].trim();
+
+        if (currentValue.startsWith('"')) {
+          currentValue = currentValue.slice(1);
+        }
+
+        if (currentValue.endsWith('"')) {
+          currentValue = currentValue.slice(0, -1);
+        }
+
+        obj[headers[j]] = currentValue;
+      }
+
+      result.push(obj);
+    }
+
+    output.value = JSON.stringify(result, null, 2);
+  });
+</script>

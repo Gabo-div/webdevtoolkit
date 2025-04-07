@@ -1,0 +1,270 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { Columns3, icons } from "@lucide/astro";
+import Badge from "@/components/Badge.astro";
+import Input from "@/components/Input.astro";
+import Button from "@/components/Button.astro";
+
+import { getCollection } from "astro:content";
+
+const categories = await getCollection("categories");
+const tools = await getCollection("tools");
+
+let totalTools = 0;
+const categoriesCounts: Record<string, number> = {};
+
+const toolsArray = tools
+  .map(({ data }) => ({
+    ...data,
+    categories: data.categories.map((category) => {
+      const categoryData = categories.find((c) => c.id === category.id);
+
+      if (!categoryData) {
+        throw new Error(`Category with ID ${category.id} not found`);
+      }
+
+      totalTools++;
+
+      if (categoriesCounts[categoryData.data.slug]) {
+        categoriesCounts[categoryData.data.slug]++;
+      } else {
+        categoriesCounts[categoryData.data.slug] = 1;
+      }
+
+      return {
+        icon: categoryData.data.icon,
+        slug: categoryData.data.slug,
+      };
+    }),
+  }))
+  .sort((a, b) => {
+    const aName = a.name.toLowerCase();
+    const bName = b.name.toLowerCase();
+
+    if (aName < bName) return -1;
+    if (aName > bName) return 1;
+    return 0;
+  });
+
+const categoriesArray = categories
+  .map((c) => {
+    const count = categoriesCounts[c.data.slug] || 0;
+    return {
+      ...c.data,
+      count,
+    };
+  })
+  .sort((a, b) => {
+    const aName = a.slug.toLowerCase();
+    const bName = b.slug.toLowerCase();
+
+    if (aName < bName) return -1;
+    if (aName > bName) return 1;
+    return 0;
+  });
+---
+
+<Layout>
+  <div id="data" data-tools={JSON.stringify(toolsArray)}></div>
+  <div class="flex h-[calc(100vh-80px-1px)]">
+    <aside
+      class="hidden h-full w-60 flex-col overflow-auto border-r px-4 py-8 md:flex"
+    >
+      <h2 class="mb-4 text-center text-2xl font-bold">Categories</h2>
+      <ul class="space-y-4">
+        <li>
+          <Button
+            data-category="all"
+            class="data-[active=true]:bg-accent data-[active=true]:text-accent-foreground w-full justify-start"
+            variant="ghost"
+          >
+            <Columns3 class="size-4" />
+            <span class="text-sm text-nowrap capitalize">All</span>
+            <Badge class="ml-auto">
+              {totalTools}
+            </Badge>
+          </Button>
+        </li>
+
+        {
+          categoriesArray.map((c) => {
+            const Icon = icons[c.icon as keyof typeof icons];
+            return (
+              <li>
+                <Button
+                  data-category={c.slug}
+                  class="data-[active=true]:bg-accent data-[active=true]:text-accent-foreground w-full justify-start"
+                  variant="ghost"
+                >
+                  <Icon class="size-4" />
+                  <span class="text-sm text-nowrap capitalize">{c.slug}</span>
+                  <Badge class="ml-auto">{c.count}</Badge>
+                </Button>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </aside>
+
+    <div class="flex-1 overflow-auto">
+      <div class="container mx-auto grid px-4 pt-20 pb-12">
+        <h2 class="text-center text-4xl font-bold">Developer Toolkit</h2>
+        <p class="mt-2 text-center">
+          A selection of free online tools to assist developers with their daily
+          web development tasks.
+        </p>
+        <div class="w-full">
+          <div class="mx-auto mt-4 max-w-xl">
+            <Input
+              id="search"
+              placeholder="Search for tools..."
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div class="mt-12 flex w-full gap-2 overflow-auto py-2 md:hidden">
+          <Button
+            data-category="all"
+            class="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground rounded-full"
+            variant="secondary"
+          >
+            <Columns3 class="size-4" />
+            <span class="text-sm text-nowrap capitalize"
+              >All ({totalTools})</span
+            >
+          </Button>
+          {
+            categoriesArray.map((c) => {
+              const Icon = icons[c.icon as keyof typeof icons];
+              return (
+                <Button
+                  data-category={c.slug}
+                  class="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground rounded-full"
+                  variant="secondary"
+                >
+                  <Icon class="size-4" />
+                  <span class="text-sm text-nowrap capitalize">
+                    {c.slug} ({c.count})
+                  </span>
+                </Button>
+              );
+            })
+          }
+        </div>
+
+        <div
+          class="3xl:grid-cols-4 mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2 2xl:grid-cols-3"
+        >
+          {
+            toolsArray.map((tool) => (
+              <a
+                href={`/tools/${tool.slug}`}
+                class="space-y-4 rounded-xl border p-8 hover:bg-zinc-900/60"
+                data-tool-categories={JSON.stringify(
+                  tool.categories.map((c) => c.slug),
+                )}
+              >
+                <h3 class="text-xl font-bold">{tool.name}</h3>
+                <p>{tool.description}</p>
+                <div class="flex flex-wrap gap-2">
+                  {tool.categories.map((c) => {
+                    const Icon = icons[c.icon as keyof typeof icons];
+                    return (
+                      <Badge>
+                        <Icon name="Palette" class="mr-2 size-4" />
+                        <span class="capitalize">{c.slug}</span>
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import Fuse from "fuse.js";
+
+  const dataDiv = document.querySelector("#data") as HTMLDivElement;
+  const toolsData = JSON.parse(dataDiv.dataset.tools as string);
+
+  const buttons = document.querySelectorAll(
+    "button[data-category]",
+  ) as NodeListOf<HTMLButtonElement>;
+  const input = document.querySelector("#search") as HTMLInputElement;
+
+  const toolsCards = document.querySelectorAll(
+    "a[data-tool-categories]",
+  ) as NodeListOf<HTMLAnchorElement>;
+
+  const fuseSearch = new Fuse(toolsData, {
+    keys: ["name", "description"],
+    shouldSort: true,
+    threshold: 0.4,
+  });
+
+  const fuseCategorySearch = new Fuse(toolsData, {
+    keys: ["categories.slug"],
+    shouldSort: true,
+    threshold: 0,
+  });
+
+  const showAllTools = () => {
+    toolsCards.forEach((card) => {
+      card.classList.remove("hidden");
+    });
+  };
+
+  const filterToolsByIndex = (index: number[]) => {
+    const indexesSet = new Set(index);
+    toolsCards.forEach((card, i) => {
+      const isVisible = indexesSet.has(i);
+      card.classList.toggle("hidden", !isVisible);
+    });
+  };
+
+  const setActiveButton = (category: string | null) => {
+    buttons.forEach((button) => {
+      const isActive = button.dataset.category === category;
+      button.dataset.active = isActive ? "true" : "false";
+    });
+  };
+
+  setActiveButton("all");
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const category = button.dataset.category as string;
+
+      setActiveButton(category);
+
+      if (category === "all") {
+        showAllTools();
+        return;
+      }
+
+      const result = fuseCategorySearch.search(category);
+      filterToolsByIndex(result.map((r) => r.refIndex));
+    });
+  });
+
+  input.addEventListener("input", (e) => {
+    const value = (e.target as HTMLInputElement).value;
+
+    if (!value) {
+      setActiveButton("all");
+      showAllTools();
+      return;
+    }
+
+    setActiveButton(null);
+    const result = fuseSearch.search(value);
+    filterToolsByIndex(result.map((r) => r.refIndex));
+  });
+</script>

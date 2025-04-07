@@ -1,0 +1,34 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { ArrowLeft } from "@lucide/astro";
+import type { CollectionEntry } from "astro:content";
+import { getEntry } from "astro:content";
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const entry = (await getEntry("tools", slug)) as CollectionEntry<"tools">;
+const tool = entry.data;
+---
+
+<Layout metadata={{ title: tool.name, description: tool.description }}>
+  <div
+    class="container mx-auto flex max-w-4xl flex-col items-center px-4 py-16"
+  >
+    <a href="/tools" class="mb-8 flex items-center">
+      <ArrowLeft class="size-4" />
+      <span class="ml-2">Developer Toolbox</span>
+    </a>
+    <h2 class="mb-8 text-3xl font-bold">{tool.name}</h2>
+    <p class="text-center text-balance">
+      {tool.description}
+    </p>
+    <div
+      class="bg-base-100 border-base-content/20 mt-8 w-full rounded-xl border p-8"
+    >
+      <slot />
+    </div>
+  </div>
+</Layout>

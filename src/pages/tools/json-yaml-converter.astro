@@ -1,0 +1,90 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import { ArrowLeft, ArrowRight } from "@lucide/astro";
+import Label from "@/components/Label.astro";
+import Textarea from "@/components/Textarea.astro";
+import Button from "@/components/Button.astro";
+---
+
+<ToolLayout slug="json-yaml-converter">
+  <div class="grid flex-1 grid-cols-2 gap-4">
+    <div class="flex flex-col items-center">
+      <Label class="label-text mb-2 w-full" for="json">JSON</Label>
+      <Textarea
+        rows={10}
+        placeholder={`{
+  "id": 1,
+  "first_name": "Bancroft",
+  "gender": "Male"
+}`}
+        id="json"
+      />
+      <Button id="convert-yaml" class="mt-4"
+        >Convert to YAML <ArrowRight /></Button
+      >
+    </div>
+
+    <div class="flex flex-col items-center">
+      <Label class="label-text mb-2 w-full" for="yaml">YAML</Label>
+      <Textarea
+        rows={10}
+        placeholder={`id: 1
+first_name: Bancroft
+gender: Male
+`}
+        id="yaml"
+      />
+
+      <Button id="convert-json" class="mt-4">
+        <ArrowLeft />
+        Convert to JSON
+      </Button>
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  import jsyaml from "js-yaml";
+
+  const jsonField = document.getElementById("json") as HTMLTextAreaElement;
+  const yamlField = document.getElementById("yaml") as HTMLTextAreaElement;
+
+  const convertYamlButton = document.getElementById(
+    "convert-yaml",
+  ) as HTMLButtonElement;
+  const convertJsonButton = document.getElementById(
+    "convert-json",
+  ) as HTMLButtonElement;
+
+  convertYamlButton.addEventListener("click", () => {
+    const json = jsonField.value;
+
+    if (!json || json === "Invalid YAML") {
+      return;
+    }
+
+    try {
+      const yaml = jsyaml.dump(JSON.parse(json));
+      yamlField.value = yaml;
+    } catch (e) {
+      console.error(e);
+      yamlField.value = "Invalid JSON";
+    }
+  });
+
+  convertJsonButton.addEventListener("click", () => {
+    const yaml = yamlField.value;
+
+    if (!yaml || yaml === "Invalid JSON") {
+      return;
+    }
+
+    try {
+      const json = jsyaml.load(yaml) as any;
+      jsonField.value = JSON.stringify(json, null, 2);
+    } catch (e) {
+      console.error(e);
+      jsonField.value = "Invalid YAML";
+    }
+  });
+</script>
