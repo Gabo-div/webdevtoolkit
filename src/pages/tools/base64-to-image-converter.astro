@@ -1,0 +1,66 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Label from "@/components/Label.astro";
+import Textarea from "@/components/Textarea.astro";
+import Button from "@/components/Button.astro";
+---
+
+<ToolLayout slug="base64-to-image-converter">
+  <div class="flex flex-1 flex-col space-y-4">
+    <div class="grid gap-2">
+      <Label for="input">Input</Label>
+      <Textarea
+        rows={5}
+        placeholder="Enter your Base64 string here..."
+        id="input"
+      />
+    </div>
+
+    <div class="flex items-center gap-2">
+      <Button id="decode">Decode To Image</Button>
+    </div>
+
+    <div
+      class="aspect-video w-full overflow-hidden rounded-xl border bg-zinc-100 dark:bg-zinc-900"
+    >
+      <img id="output" class="hidden h-full w-full object-contain" />
+      <div
+        id="error-message"
+        class="hidden h-full w-full items-center justify-center data-[show=true]:flex"
+      >
+        <p class="font-medium text-red-500 dark:text-red-400">Invalid Image</p>
+      </div>
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const input = document.getElementById("input") as HTMLInputElement;
+  const outputImage = document.getElementById("output") as HTMLInputElement;
+  const errorMessage = document.getElementById(
+    "error-message",
+  ) as HTMLDivElement;
+
+  const decodeButton = document.getElementById("decode") as HTMLButtonElement;
+
+  const showError = () => {
+    outputImage.classList.toggle("hidden", true);
+    errorMessage.dataset.show = "true";
+  };
+
+  decodeButton.addEventListener("click", () => {
+    if (!input.value.startsWith("data:image")) {
+      showError();
+      return;
+    }
+
+    outputImage.src = input.value;
+  });
+
+  outputImage.addEventListener("load", () => {
+    outputImage.classList.toggle("hidden", false);
+    errorMessage.dataset.show = "false";
+  });
+
+  outputImage.addEventListener("error", showError);
+</script>

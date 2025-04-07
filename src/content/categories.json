@@ -9,5 +9,6 @@
   { "slug": "time", "icon": "Clock" },
   { "slug": "jwt", "icon": "ShieldCheck" },
   { "slug": "security", "icon": "ShieldCheck" },
-  { "slug": "generator", "icon": "Cog" }
+  { "slug": "generator", "icon": "Cog" },
+  { "slug": "image", "icon": "Image" }
 ]

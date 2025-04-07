@@ -46,5 +46,11 @@
     "name": "Color Converter",
     "description": "Converts colors between different formats (e.g., HEX, RGB, HSL), enabling designers and developers to work with color values in their preferred format.",
     "categories": ["converter", "design"]
+  },
+  {
+    "slug": "base64-to-image-converter",
+    "name": "Base64 to Image Converter",
+    "description": "Decodes Base64 encoded strings to visualize the resulting image online, useful for working with data URLs, embedded images, and transferring image data as text.",
+    "categories": ["image", "decoder", "converter"]
   }
 ]
