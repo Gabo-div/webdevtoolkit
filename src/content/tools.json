@@ -52,5 +52,11 @@
     "name": "Base64 to Image Converter",
     "description": "Decodes Base64 encoded strings to visualize the resulting image online, useful for working with data URLs, embedded images, and transferring image data as text.",
     "categories": ["image", "decoder", "converter"]
+  },
+  {
+    "slug": "image-color-picker",
+    "name": "Image Color Picker",
+    "description": "Extract colors from any image online. Simply upload an image or provide a URL to instantly get the HEX, RGB, and HSL color codes of any pixel you select.",
+    "categories": ["image", "design"]
   }
 ]

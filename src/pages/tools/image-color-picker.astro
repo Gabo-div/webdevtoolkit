@@ -1,0 +1,192 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Input from "@/components/Input.astro";
+import CopyButton from "@/components/CopyButton.astro";
+---
+
+<ToolLayout slug="image-color-picker" class="max-w-8xl container">
+  <div class="flex flex-1 flex-wrap">
+    <div
+      class="flex w-full items-center justify-center border bg-zinc-100 lg:w-3/5 dark:bg-zinc-900"
+    >
+      <canvas id="canvas" class="cursor-crosshair"></canvas>
+    </div>
+    <div class="flex w-full flex-col space-y-4 pt-4 lg:w-2/5 lg:pt-0 lg:pl-4">
+      <div class="flex items-center gap-4">
+        <div
+          id="selection-preview"
+          class="bg-background grid size-36 grid-cols-11 gap-[1px] overflow-hidden rounded-full border transition-all"
+        >
+          {
+            Array.from({ length: 11 * 11 }).map(() => (
+              <div class="nth-61:ring-1 nth-61:ring-red-500" />
+            ))
+          }
+        </div>
+        <div class="flex flex-1 flex-col gap-4">
+          <div class="flex items-center gap-2">
+            <div>
+              <div id="color-preview" class="size-12 rounded-xl border"></div>
+            </div>
+            <Input id="color-input" />
+            <CopyButton target="color-input" />
+          </div>
+          <div class="flex items-center gap-2">
+            <div>
+              <div id="selected-preview" class="size-12 rounded-xl border">
+              </div>
+            </div>
+            <Input id="selected-input" />
+            <CopyButton target="selected-input" />
+          </div>
+        </div>
+      </div>
+      <input id="upload" type="file" class="hidden" accept="image/*" />
+      <label
+        for="upload"
+        class="ring-offset-background focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+      >
+        Upload Image
+      </label>
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  import placeholderImage from "@/assets/image-placeholder.jpg";
+
+  const upload = document.getElementById("upload") as HTMLInputElement;
+  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  const parent = canvas.parentNode as HTMLDivElement;
+
+  const selectionPreview = document.getElementById(
+    "selection-preview",
+  ) as HTMLDivElement;
+
+  const colorInput = document.getElementById("color-input") as HTMLInputElement;
+  const colorPreview = document.getElementById(
+    "color-preview",
+  ) as HTMLDivElement;
+
+  const selectedInput = document.getElementById(
+    "selected-input",
+  ) as HTMLInputElement;
+  const selectedPreview = document.getElementById(
+    "selected-preview",
+  ) as HTMLDivElement;
+
+  const ctx = canvas.getContext("2d", {
+    willReadFrequently: true,
+  }) as CanvasRenderingContext2D;
+
+  const reader = new FileReader();
+  const image = new Image();
+
+  const drawImage = () => {
+    if (image.width < parent.clientWidth) {
+      canvas.width = image.width;
+      canvas.height = image.height;
+
+      ctx.drawImage(image, 0, 0);
+      return;
+    }
+
+    const ratio = image.width / image.height;
+    let width = parent.clientWidth;
+    let height = Math.floor(width / ratio);
+
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.drawImage(image, 0, 0, width, height);
+  };
+
+  new ResizeObserver(() => {
+    drawImage();
+  }).observe(parent);
+
+  reader.addEventListener("load", (e) => {
+    image.src = e.target?.result as string;
+  });
+
+  image.addEventListener("load", drawImage);
+
+  upload.addEventListener("change", () => {
+    if (!upload.files || !upload.files[0]) {
+      return;
+    }
+    reader.readAsDataURL(upload.files[0]);
+  });
+
+  document.addEventListener("paste", (e) => {
+    if (!e.clipboardData) {
+      return;
+    }
+
+    const item = e.clipboardData.items[0];
+
+    if (item.type.indexOf("image") !== 0) {
+      return;
+    }
+
+    const blob = item.getAsFile();
+
+    if (!blob) {
+      return;
+    }
+
+    reader.readAsDataURL(blob);
+  });
+
+  canvas.addEventListener("mousemove", (e) => {
+    if (!image) {
+      return;
+    }
+
+    const mouseX = e.offsetX;
+    const mouseY = e.offsetY;
+
+    for (let y = -5; y <= 5; y++) {
+      for (let x = -5; x <= 5; x++) {
+        const coordX = mouseX + x;
+        const coordY = mouseY + y;
+
+        let color = "rgb(255, 255, 255)";
+
+        if (
+          coordX >= 0 &&
+          coordX < canvas.width &&
+          coordY >= 0 &&
+          coordY < canvas.height
+        ) {
+          const pixel = ctx.getImageData(coordX, coordY, 1, 1);
+          const data = pixel.data;
+          color = `rgb(${data[0]}, ${data[1]}, ${data[2]})`;
+        }
+
+        if (!x && !y) {
+          colorPreview.style.backgroundColor = color;
+          colorInput.value = color;
+        }
+
+        (
+          selectionPreview.children[(y + 5) * 11 + (x + 5)] as HTMLDivElement
+        ).style.backgroundColor = color;
+      }
+    }
+  });
+
+  canvas.addEventListener("click", (e) => {
+    const mouseX = e.offsetX;
+    const mouseY = e.offsetY;
+
+    const pixel = ctx.getImageData(mouseX, mouseY, 1, 1);
+    const data = pixel.data;
+    const color = `rgb(${data[0]}, ${data[1]}, ${data[2]})`;
+
+    selectedPreview.style.backgroundColor = color;
+    selectedInput.value = color;
+  });
+
+  image.src = placeholderImage.src;
+</script>

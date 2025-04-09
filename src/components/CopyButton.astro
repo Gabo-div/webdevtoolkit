@@ -1,0 +1,53 @@
+---
+import Button from "@/components/Button.astro";
+import { Clipboard, Check } from "@lucide/astro";
+
+interface Props {
+  target: string;
+}
+
+const { target } = Astro.props;
+---
+
+<Button
+  class="copy-button group p-4 disabled:bg-green-500 disabled:opacity-100 dark:disabled:bg-green-600"
+  size="icon"
+  data-target={target}
+  ><Clipboard
+    class="size-5 scale-100 rotate-0 transition-all group-disabled:scale-0 group-disabled:-rotate-90"
+  />
+  <Check
+    class="absolute size-5 scale-0 rotate-90 text-white transition-all group-disabled:scale-100 group-disabled:rotate-0"
+  />
+</Button>
+
+<script>
+  const buttons = document.querySelectorAll(
+    "button.copy-button",
+  ) as NodeListOf<HTMLButtonElement>;
+
+  buttons.forEach((b) => {
+    b.addEventListener("click", () => {
+      let text = "";
+
+      const targetSelector = b.dataset.target;
+
+      if (targetSelector) {
+        const target = document.querySelector<HTMLInputElement>(
+          "#" + targetSelector,
+        );
+
+        if (target && target.value) {
+          text = target.value;
+        }
+      }
+
+      b.disabled = true;
+      navigator.clipboard.writeText(text);
+
+      setTimeout(() => {
+        b.disabled = false;
+      }, 1000);
+    });
+  });
+</script>
