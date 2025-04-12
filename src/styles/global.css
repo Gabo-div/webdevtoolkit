@@ -133,6 +133,13 @@
   button {
     @apply cursor-pointer;
   }
+  ::-webkit-scrollbar {
+    @apply size-2 touch-none p-[1px];
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
 }
 
 @layer utilities {
