@@ -1,9 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { Columns3, icons } from "@lucide/astro";
-import Badge from "@/components/Badge.astro";
-import Input from "@/components/Input.astro";
-import Button from "@/components/Button.astro";
+import Badge from "@/components/starwind/badge";
+import Input from "@/components/starwind/input";
+import Button from "@/components/starwind/button";
 
 import { getCollection } from "astro:content";
 
@@ -127,8 +127,8 @@ const categoriesArray = categories
         <div class="mt-12 flex w-full gap-2 overflow-auto py-2 md:hidden">
           <Button
             data-category="all"
-            class="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground rounded-full"
-            variant="secondary"
+            class="data-[active=true]:bg-foreground data-[active=true]:text-background rounded-full"
+            variant="outline"
           >
             <Columns3 class="size-4" />
             <span class="text-sm text-nowrap capitalize"
@@ -141,8 +141,8 @@ const categoriesArray = categories
               return (
                 <Button
                   data-category={c.slug}
-                  class="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground rounded-full"
-                  variant="secondary"
+                  class="data-[active=true]:bg-foreground data-[active=true]:text-background rounded-full"
+                  variant="outline"
                 >
                   <Icon class="size-4" />
                   <span class="text-sm text-nowrap capitalize">

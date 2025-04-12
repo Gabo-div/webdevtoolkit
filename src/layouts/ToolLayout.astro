@@ -3,7 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import { ArrowLeft } from "@lucide/astro";
 import type { CollectionEntry } from "astro:content";
 import { getEntry } from "astro:content";
-import { cn } from "@/lib/utils";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   slug: string;
@@ -17,7 +17,7 @@ const tool = entry.data;
 
 <Layout metadata={{ title: tool.name, description: tool.description }}>
   <div
-    class={cn(
+    class={twMerge(
       "container mx-auto flex max-w-4xl flex-col items-center px-4 py-16",
       className,
     )}

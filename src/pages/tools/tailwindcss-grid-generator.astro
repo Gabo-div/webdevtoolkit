@@ -1,11 +1,11 @@
 ---
 import ToolLayout from "@/layouts/ToolLayout.astro";
-import Label from "@/components/Label.astro";
-import Input from "@/components/Input.astro";
-import Textarea from "@/components/Textarea.astro";
-import Button from "@/components/Button.astro";
+import Label from "@/components/starwind/label";
+import Input from "@/components/starwind/input";
+import Textarea from "@/components/starwind/textarea";
+import Button from "@/components/starwind/button";
 import CopyButton from "@/components/CopyButton.astro";
-import Checkbox from "@/components/Checkbox.astro";
+import Checkbox from "@/components/starwind/checkbox";
 import { Plus, ArrowDownRight, Trash } from "@lucide/astro";
 ---
 
@@ -91,7 +91,7 @@ import { Plus, ArrowDownRight, Trash } from "@lucide/astro";
 
 <template id="item-template">
   <div
-    class="bg-primary text-primary-foreground absolute top-0 left-0 z-10 flex rounded-xl font-bold"
+    class="bg-foreground text-background absolute top-0 left-0 z-10 flex rounded-xl font-bold"
   >
     <div class="relative flex h-full w-full items-center justify-center">
       <span>1</span>
