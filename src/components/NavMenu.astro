@@ -1,0 +1,61 @@
+---
+import Menu from "@tabler/icons/outline/menu-2.svg";
+import X from "@tabler/icons/outline/x.svg";
+import Github from "@tabler/icons/outline/brand-github.svg";
+import ModeToggle from "@/components/ModeToggle.astro";
+---
+
+<button id="open"><Menu class="size-5" /></button>
+
+<dialog
+  id="dialog"
+  data-state="closed"
+  class="bg-background data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:slide-in-from-bottom-4 fixed top-0 left-0 z-50 h-screen max-h-none w-full max-w-none rounded-none p-8 shadow-lg"
+>
+  <div class="flex h-full w-full flex-col">
+    <div class="flex items-center justify-between">
+      <h1 class="text-xl font-bold">
+        <a href="/">webdevtoolkit</a>
+      </h1>
+      <button id="close"><X class="size-6" /></button>
+    </div>
+
+    <nav class="mt-8 flex">
+      <a
+        class="text-lg font-semibold opacity-75 hover:opacity-100"
+        href="/tools">Tools</a
+      >
+    </nav>
+
+    <div class="mt-auto flex items-center justify-evenly">
+      <a
+        href="https://github.com/Gabo-div/webdevtoolkit"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hover:opacity-75"
+        aria-label="GitHub"
+      >
+        <Github class="size-5" />
+      </a>
+      <ModeToggle />
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const open = document.getElementById("open");
+  const close = document.getElementById("close");
+  const dialog = document.getElementById("dialog");
+
+  open.addEventListener("click", () => {
+    dialog.dataset.state = "open";
+    dialog.showModal();
+  });
+
+  close.addEventListener("click", () => {
+    dialog.dataset.state = "closed";
+    setTimeout(() => {
+      dialog.close();
+    }, 150);
+  });
+</script>

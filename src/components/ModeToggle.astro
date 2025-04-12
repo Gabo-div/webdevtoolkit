@@ -2,7 +2,7 @@
 import { Sun, Moon } from "@lucide/astro";
 ---
 
-<button class="inline-flex cursor-pointer hover:opacity-75" id="mode-toggle">
+<button class="mode-toggle inline-flex cursor-pointer hover:opacity-75">
   <Sun
     class="size-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
   />
@@ -13,8 +13,11 @@ import { Sun, Moon } from "@lucide/astro";
 </button>
 
 <script>
-  const btn = document.querySelector("#mode-toggle") as HTMLButtonElement;
-  btn.addEventListener("click", () => {
-    document.documentElement.classList.toggle("dark");
+  const btn = document.querySelectorAll("button.mode-toggle");
+
+  btn.forEach((el) => {
+    el.addEventListener("click", () => {
+      document.documentElement.classList.toggle("dark");
+    });
   });
 </script>

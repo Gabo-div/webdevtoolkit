@@ -4,6 +4,8 @@ import { ArrowLeft } from "@lucide/astro";
 import type { CollectionEntry } from "astro:content";
 import { getEntry } from "astro:content";
 import { twMerge } from "tailwind-merge";
+import Button from "@/components/starwind/button";
+import Github from "@tabler/icons/outline/brand-github.svg";
 
 interface Props {
   slug: string;
@@ -22,11 +24,11 @@ const tool = entry.data;
       className,
     )}
   >
-    <a href="/tools" class="mb-8 flex items-center">
+    <Button href="/tools" class="mb-8 flex items-center" variant="ghost">
       <ArrowLeft class="size-4" />
       <span class="ml-2">Developer Toolbox</span>
-    </a>
-    <h2 class="mb-8 text-3xl font-bold">{tool.name}</h2>
+    </Button>
+    <h2 class="mb-8 text-center text-3xl font-bold">{tool.name}</h2>
     <p class="text-center text-balance">
       {tool.description}
     </p>
@@ -34,6 +36,24 @@ const tool = entry.data;
       class="bg-base-100 border-base-content/20 mt-8 w-full rounded-xl border p-8"
     >
       <slot />
+    </div>
+    <div class="mt-12">
+      <a
+        class="flex max-w-xl flex-col space-y-4 rounded-xl border p-8 transition-all hover:bg-zinc-200/60 dark:hover:bg-zinc-900/60"
+        href="https://github.com/Gabo-div/webdevtoolkit"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <div class="flex items-center gap-4">
+          <Github />
+          <h3 class="text-xl font-bold">Contribute to the Project</h3>
+        </div>
+
+        <p>
+          If you find any issues with this tool, please let us know by
+          submitting an issue on GitHub.
+        </p>
+      </a>
     </div>
   </div>
 </Layout>

@@ -2,6 +2,8 @@
 import "@/styles/global.css";
 import "@fontsource-variable/inter";
 import ModeToggle from "@/components/ModeToggle.astro";
+import Github from "@tabler/icons/outline/brand-github.svg";
+import NavMenu from "@/components/NavMenu.astro";
 
 interface Props {
   metadata?: {
@@ -53,11 +55,27 @@ const url = "https://wdtoolkit.vercel.app/";
         <h1 class="text-xl font-bold">
           <a href="/">webdevtoolkit</a>
         </h1>
-        <div class="flex items-center gap-8">
-          <a class="font-medium hover:opacity-75" href="/tools">Tools</a>
+
+        <div class="hidden items-center gap-8 md:flex">
+          <a class="font-semibold opacity-75 hover:opacity-100" href="/tools"
+            >Tools</a
+          >
         </div>
-        <div class="ml-auto flex items-center gap-8">
+
+        <div class="ml-auto hidden items-center gap-8 md:flex">
+          <a
+            href="https://github.com/Gabo-div/webdevtoolkit"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:opacity-75"
+          >
+            <Github class="size-5" />
+          </a>
           <ModeToggle />
+        </div>
+
+        <div class="ml-auto flex items-center md:hidden">
+          <NavMenu />
         </div>
       </div>
     </header>
