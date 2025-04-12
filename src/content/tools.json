@@ -58,5 +58,12 @@
     "name": "Image Color Picker",
     "description": "Extract colors from any image online. Simply upload an image or provide a URL to instantly get the HEX, RGB, and HSL color codes of any pixel you select.",
     "categories": ["image", "design"]
+  },
+
+  {
+    "slug": "tailwindcss-grid-generator",
+    "name": "Tailwind CSS Grid Generator",
+    "description": "Easily generate Tailwind CSS grid layouts with customizable columns, rows end gap. Quickly create the grid classes you need for your web projects.",
+    "categories": ["tailwindcss", "css", "generator"]
   }
 ]

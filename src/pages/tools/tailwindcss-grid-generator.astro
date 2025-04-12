@@ -1,0 +1,406 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Label from "@/components/Label.astro";
+import Input from "@/components/Input.astro";
+import Textarea from "@/components/Textarea.astro";
+import Button from "@/components/Button.astro";
+import CopyButton from "@/components/CopyButton.astro";
+import Checkbox from "@/components/Checkbox.astro";
+import { Plus, ArrowDownRight, Trash } from "@lucide/astro";
+---
+
+<ToolLayout slug="tailwindcss-grid-generator" class="container max-w-6xl">
+  <div class="flex flex-1 flex-col space-y-6">
+    <div class="grid grid-cols-4 gap-4">
+      <div class="grid gap-2">
+        <Label for="input">Columns</Label>
+        <Input
+          placeholder="0"
+          value="5"
+          type="number"
+          id="cols"
+          autocomplete="off"
+          min="1"
+          max="12"
+        />
+      </div>
+      <div class="grid gap-2">
+        <Label for="input">Rows</Label>
+        <Input
+          placeholder="0"
+          value="5"
+          type="number"
+          id="rows"
+          autocomplete="off"
+          min="1"
+          max="12"
+        />
+      </div>
+      <div class="grid gap-2">
+        <Label for="input">Gap</Label>
+        <Input
+          placeholder="0"
+          value="4"
+          type="number"
+          id="gap"
+          autocomplete="off"
+          min="0"
+          max="12"
+        />
+      </div>
+      <div class="flex h-full w-full">
+        <Button id="reset" class="mt-auto w-full"> Reset </Button>
+      </div>
+    </div>
+
+    <div class="bg-border h-[1px] w-full"></div>
+
+    <div id="grid" class="grid"></div>
+
+    <div class="bg-border h-[1px] w-full"></div>
+
+    <div class="grid gap-4">
+      <div class="flex items-center gap-2">
+        <Checkbox id="jsx" checked />
+        <Label for="jsx">JSX</Label>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <Textarea
+          readonly
+          rows={10}
+          id="output"
+          class="resize-none bg-zinc-900"
+        />
+        <CopyButton target="output" />
+      </div>
+    </div>
+  </div>
+</ToolLayout>
+
+<template id="slot-template">
+  <div
+    class="inset-ring-border relative flex h-20 items-center justify-center rounded-xl inset-ring"
+  >
+    <div class="slot h-full w-full"></div>
+    <Plus
+      class="absolute top-1/2 left-1/2 -z-10 size-4 -translate-1/2 opacity-50"
+    />
+  </div>
+</template>
+
+<template id="item-template">
+  <div
+    class="bg-primary text-primary-foreground absolute top-0 left-0 z-10 flex rounded-xl font-bold"
+  >
+    <div class="relative flex h-full w-full items-center justify-center">
+      <span>1</span>
+      <button
+        class="delete absolute top-2 right-2 cursor-pointer appearance-none text-red-400"
+      >
+        <Trash class="size-4.5" />
+      </button>
+      <button
+        class="resize-handler absolute right-1 bottom-1 cursor-pointer appearance-none"
+      >
+        <ArrowDownRight />
+      </button>
+    </div>
+  </div>
+</template>
+
+<script>
+  type Item = {
+    rowStart: number;
+    rowEnd: number;
+    colStart: number;
+    colEnd: number;
+  };
+
+  type Slot = {
+    col: number;
+    row: number;
+  };
+
+  const columnsInput = document.querySelector("#cols") as HTMLInputElement;
+  const rowsInput = document.querySelector("#rows") as HTMLInputElement;
+  const gapInput = document.querySelector("#gap") as HTMLInputElement;
+  const resetButton = document.querySelector("#reset") as HTMLInputElement;
+  const outputInput = document.querySelector("#output") as HTMLTextAreaElement;
+  const jsxCheckbox = document.querySelector("#jsx") as HTMLInputElement;
+  const gridContainer = document.querySelector("#grid") as HTMLDivElement;
+
+  const slotTemplate = document.querySelector(
+    "#slot-template",
+  ) as HTMLTemplateElement;
+  const itemTemplate = document.querySelector(
+    "#item-template",
+  ) as HTMLTemplateElement;
+
+  let cols = parseInt(columnsInput.value);
+  let rows = parseInt(columnsInput.value);
+  let gap = parseInt(columnsInput.value);
+
+  const useTemplate = <T extends HTMLElement>(template: HTMLTemplateElement) =>
+    template.content.children[0].cloneNode(true) as T;
+
+  const getItemData = (item: HTMLDivElement): Item | null => {
+    const rowStart = parseInt(item.dataset.rowStart || "");
+    const rowEnd = parseInt(item.dataset.rowEnd || "");
+    const colStart = parseInt(item.dataset.colStart || "");
+    const colEnd = parseInt(item.dataset.colEnd || "");
+
+    if (isNaN(rowStart) || isNaN(rowEnd) || isNaN(colStart) || isNaN(colEnd)) {
+      return null;
+    }
+
+    return { rowStart, rowEnd, colStart, colEnd };
+  };
+
+  const getSlotData = (slot: HTMLDivElement): Slot | null => {
+    const row = parseInt(slot.dataset.row || "");
+    const col = parseInt(slot.dataset.col || "");
+
+    if (isNaN(row) || isNaN(col)) {
+      return null;
+    }
+
+    return { row, col };
+  };
+
+  const getAllItems = () => {
+    return gridContainer.querySelectorAll<HTMLDivElement>(
+      `div[data-row-start][data-col-start]`,
+    );
+  };
+
+  function makeResizable(element: HTMLDivElement) {
+    const resizeHandle = element.querySelector(
+      "button.resize-handler",
+    ) as HTMLButtonElement;
+    const itemData = getItemData(element);
+
+    if (!itemData) {
+      return;
+    }
+
+    let startX = 0;
+    let startY = 0;
+    let initialWidth = 0;
+    let initialHeight = 0;
+    let startRow = itemData.rowStart;
+    let startCol = itemData.colStart;
+
+    let itemsData: Item[] = [];
+
+    resizeHandle.addEventListener("mousedown", (e) => {
+      startX = e.clientX;
+      startY = e.clientY;
+
+      initialWidth = element.offsetWidth;
+      initialHeight = element.offsetHeight;
+
+      itemsData = [...getAllItems().values()].map(
+        (e) => getItemData(e) as Item,
+      );
+
+      document.addEventListener("mousemove", resizeElement);
+      document.addEventListener("mouseup", stopResize);
+    });
+
+    function resizeElement(e: MouseEvent) {
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      const newWidth = initialWidth + deltaX;
+      const newHeight = initialHeight + deltaY;
+
+      const rowSpan = Math.round(
+        newHeight / (gridContainer.offsetHeight / rows),
+      );
+      const colSpan = Math.round(newWidth / (gridContainer.offsetWidth / cols));
+
+      const newRowEnd = startRow + rowSpan - 1;
+      const newColEnd = startCol + colSpan - 1;
+
+      const collision = itemsData.some((d) => {
+        if (startRow === d.rowStart && startCol === d.colStart) {
+          return false;
+        }
+
+        if (
+          newRowEnd >= d.rowStart &&
+          startRow <= d.rowEnd &&
+          newColEnd >= d.colStart &&
+          startCol <= d.colEnd
+        ) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (
+        newRowEnd < rows &&
+        newColEnd < cols &&
+        newRowEnd >= 0 &&
+        newColEnd >= 0 &&
+        newRowEnd >= startRow &&
+        newColEnd >= startCol &&
+        !collision
+      ) {
+        element.dataset.rowEnd = newRowEnd.toString();
+        element.dataset.colEnd = newColEnd.toString();
+        element.style.height = `calc((100% * ${rowSpan}) + (var(--spacing) * ${gap} * ${rowSpan - 1}))`;
+        element.style.width = `calc((100% * ${colSpan}) + (var(--spacing) * ${gap} * ${colSpan - 1}))`;
+      }
+    }
+
+    function stopResize() {
+      document.removeEventListener("mousemove", resizeElement);
+      document.removeEventListener("mouseup", stopResize);
+      handleGenerate();
+    }
+  }
+
+  const makeDeleteable = (item: HTMLDivElement) => {
+    const deleteButton = item.querySelector(
+      "button.delete",
+    ) as HTMLButtonElement;
+
+    deleteButton.addEventListener("click", () => {
+      item.remove();
+      handleGenerate();
+    });
+  };
+
+  const handleAddItem = (e: MouseEvent) => {
+    const slotDiv = e.target as HTMLDivElement;
+    const slotData = getSlotData(slotDiv.parentElement as HTMLDivElement);
+
+    if (!slotData) {
+      return;
+    }
+
+    const totalItems = gridContainer.querySelectorAll(
+      "div[data-row-start][data-col-start]",
+    ).length;
+
+    const item = useTemplate<HTMLDivElement>(itemTemplate);
+    const span = item.querySelector("span") as HTMLSpanElement;
+
+    item.dataset.rowStart = slotData.row.toString();
+    item.dataset.colStart = slotData.col.toString();
+    item.dataset.rowEnd = slotData.row.toString();
+    item.dataset.colEnd = slotData.col.toString();
+
+    span.innerText = (totalItems + 1).toString();
+
+    item.style.height = "100%";
+    item.style.width = "100%";
+
+    makeResizable(item);
+    makeDeleteable(item);
+
+    slotDiv.replaceChildren(item);
+
+    handleGenerate();
+  };
+
+  const handleGenerate = () => {
+    cols = parseInt(columnsInput.value);
+    rows = parseInt(rowsInput.value);
+    gap = parseInt(gapInput.value);
+    const jsx = jsxCheckbox.checked;
+
+    const items = getAllItems();
+
+    const gridDivs: string[] = [];
+
+    items.forEach((item, i) => {
+      const itemData = getItemData(item) as Item;
+
+      const itemRow = Math.floor(i / rows);
+      const itemCol = i % rows;
+
+      const itemSpan = item.querySelector("span") as HTMLSpanElement;
+      const number = itemSpan.innerText;
+
+      const rowStart = itemData.rowStart;
+      const rowEnd = itemData.rowEnd;
+      const colStart = itemData.colStart;
+      const colEnd = itemData.colEnd;
+
+      const rowSpan = rowEnd - rowStart + 1;
+      const colSpan = colEnd - colStart + 1;
+
+      const defaultStart = itemRow === rowStart && itemCol === colStart;
+
+      const rowClass = rowSpan > 1 ? `row-span-${rowSpan}` : "";
+      const colClass = colSpan > 1 ? `col-span-${colSpan}` : "";
+      const rowStartClass = !defaultStart ? `row-start-${rowStart + 1}` : "";
+      const colStartClass = !defaultStart ? `col-start-${colStart + 1}` : "";
+
+      if (!rowClass && !colClass && !rowStartClass && !colStartClass) {
+        gridDivs.push(`<div>${number}</div>`);
+        return;
+      }
+
+      gridDivs.push(
+        `<div ${jsx ? "className" : "class"}="${[rowStartClass, colStartClass, rowClass, colClass].filter((c) => c).join(" ")}">${number}</div>`,
+      );
+    });
+
+    outputInput.value = `<div ${jsx ? "className" : "class"}="grid grid-cols-${cols} gap-${gap}">\n${gridDivs
+      .map((d) => `\t\t${d}`)
+      .join("\n")}\n</div>`;
+  };
+
+  const handleSlots = () => {
+    cols = parseInt(columnsInput.value);
+    rows = parseInt(rowsInput.value);
+    gap = parseInt(gapInput.value);
+
+    gridContainer.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+    gridContainer.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
+    gridContainer.style.gap = `calc(var(--spacing) * ${gap})`;
+
+    const fragment = new DocumentFragment();
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const slot = useTemplate<HTMLDivElement>(slotTemplate);
+
+        slot.dataset.row = r.toString();
+        slot.dataset.col = c.toString();
+
+        const slotDiv = slot.querySelector(".slot") as HTMLDivElement;
+
+        slotDiv.addEventListener("click", handleAddItem);
+        fragment.appendChild(slot);
+      }
+    }
+    gridContainer.replaceChildren(fragment);
+    handleGenerate();
+  };
+
+  columnsInput.addEventListener("input", handleSlots);
+  rowsInput.addEventListener("input", handleSlots);
+  gapInput.addEventListener("input", handleSlots);
+  window.addEventListener("load", handleSlots);
+
+  resetButton.addEventListener("click", () => {
+    const items = getAllItems();
+
+    items.forEach((item) => {
+      item.remove();
+    });
+
+    columnsInput.value = "5";
+    rowsInput.value = "5";
+    gapInput.value = "4";
+
+    handleSlots();
+  });
+
+  jsxCheckbox.addEventListener("change", handleGenerate);
+</script>
