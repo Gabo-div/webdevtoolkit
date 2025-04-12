@@ -40,7 +40,12 @@ import { RefreshCw, Clipboard } from "@lucide/astro";
     <div class="grid gap-2">
       <Label for="result">Result</Label>
       <div class="flex items-center gap-2">
-        <Input id="result" placeholder="Result" readonly class="bg-zinc-900" />
+        <Input
+          id="result"
+          placeholder="Result"
+          readonly
+          class="bg-zinc-100 dark:bg-zinc-900"
+        />
         <Button id="generate"><RefreshCw /></Button>
         <Button id="copy"><Clipboard /></Button>
       </div>
