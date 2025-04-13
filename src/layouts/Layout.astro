@@ -4,6 +4,7 @@ import "@fontsource-variable/inter";
 import ModeToggle from "@/components/ModeToggle.astro";
 import Github from "@tabler/icons/outline/brand-github.svg";
 import NavMenu from "@/components/NavMenu.astro";
+import { SEO } from "astro-seo";
 
 interface Props {
   metadata?: {
@@ -18,30 +19,42 @@ const title = metadata?.title || "webdevtoolkit";
 const description =
   metadata?.description ||
   "Collection of essential resources to assist with web development. Find the perfect tools to enhance your projects and daily work.";
-const url = "https://wdtoolkit.vercel.app/";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-    <meta name="description" content={description} />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
-    <meta property="og:site_name" content={title} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={url} />
-
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:card" content="summary_large_image" />
-
-    <link rel="canonical" href={url} />
+    <SEO
+      title={title}
+      description={description}
+      openGraph={{
+        basic: {
+          title: description,
+          type: "website",
+          image: "/og.png",
+        },
+        optional: {
+          siteName: "webdevtoolkit",
+        },
+        image: {
+          type: "image/png",
+          width: 1920,
+          height: 1080,
+          alt: "webdevtoolkit",
+        },
+      }}
+      twitter={{
+        card: "summary_large_image",
+        title: description,
+        image: "/og.png",
+        imageAlt: "webdevtoolkit",
+      }}
+    />
 
     <script
       is:inline
