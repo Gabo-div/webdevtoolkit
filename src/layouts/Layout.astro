@@ -15,7 +15,10 @@ interface Props {
 
 const { metadata } = Astro.props;
 
-const title = metadata?.title || "webdevtoolkit";
+const title = metadata?.title
+  ? `${metadata.title} - webdevtoolkit`
+  : "webdevtoolkit - Collection of resources for web development";
+
 const description =
   metadata?.description ||
   "Collection of essential resources to assist with web development. Find the perfect tools to enhance your projects and daily work.";

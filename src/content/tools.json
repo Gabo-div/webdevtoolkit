@@ -8,13 +8,13 @@
   {
     "slug": "csv-to-json",
     "name": "CSV to JSON Converter",
-    "description": "Converts tabular data in CSV (Comma Separated Values) format to the hierarchical structure of JSON (JavaScript Object Notation), ideal for integrating data into web applications and APIs.",
+    "description": "Converts tabular data in CSV format to the hierarchical structure of JSON, ideal for integrating data into web applications and APIs.",
     "categories": ["converter"]
   },
   {
     "slug": "json-yaml-converter",
     "name": "JSON/YAML Converter",
-    "description": "Enables bidirectional conversion between JSON and YAML (YAML Ain't Markup Language) data serialization formats, offering flexibility in managing configuration files and data.",
+    "description": "Enables bidirectional conversion between JSON and YAML data serialization formats, offering flexibility in managing configuration files and data.",
     "categories": ["converter"]
   },
   {
