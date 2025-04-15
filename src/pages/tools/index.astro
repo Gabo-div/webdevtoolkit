@@ -160,7 +160,7 @@ const categoriesArray = categories
           {
             toolsArray.map((tool) => (
               <a
-                href={`/tools/${tool.slug}`}
+                href={`/tools/${tool.slug}/`}
                 class="space-y-4 rounded-xl border p-8 transition-all hover:bg-zinc-200/60 dark:hover:bg-zinc-900/60"
                 data-tool-categories={JSON.stringify(
                   tool.categories.map((c) => c.slug),
