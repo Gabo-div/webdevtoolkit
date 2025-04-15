@@ -26,6 +26,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.1.3
         version: 4.1.3(vite@6.2.5(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
+      '@types/crypto-js':
+        specifier: ^4.2.2
+        version: 4.2.2
       astro:
         specifier: ^5.6.0
         version: 5.6.0(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.39.0)(typescript@5.8.2)(yaml@2.7.1)
@@ -35,6 +38,9 @@ importers:
       chroma-js:
         specifier: ^3.1.2
         version: 3.1.2
+      crypto-js:
+        specifier: ^4.2.0
+        version: 4.2.0
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -60,6 +66,9 @@ importers:
         specifier: ^1.2.5
         version: 1.2.5
     devDependencies:
+      '@astrojs/ts-plugin':
+        specifier: ^1.10.4
+        version: 1.10.4
       '@types/chroma-js':
         specifier: ^3.1.1
         version: 3.1.1
@@ -115,6 +124,9 @@ packages:
   '@astrojs/telemetry@3.2.0':
     resolution: {integrity: sha512-wxhSKRfKugLwLlr4OFfcqovk+LIFtKwLyGPqMsv+9/ibqqnW3Gv7tBhtKEb0gAyUAC4G9BTVQeQahqnQAhd6IQ==}
     engines: {node: ^18.17.1 || ^20.3.0 || >=22.0.0}
+
+  '@astrojs/ts-plugin@1.10.4':
+    resolution: {integrity: sha512-rapryQINgv5VLZF884R/wmgX3mM9eH1PC/I3kkPV9rP6lEWrRN1YClF3bGcDHFrf8EtTLc0Wqxne1Uetpevozg==}
 
   '@astrojs/yaml2ts@0.2.2':
     resolution: {integrity: sha512-GOfvSr5Nqy2z5XiwqTouBBpy5FyI6DEe+/g/Mk5am9SjILN1S5fOEvYK0GuWHg98yS/dobP4m8qyqw/URW35fQ==}
@@ -660,6 +672,9 @@ packages:
   '@types/chroma-js@3.1.1':
     resolution: {integrity: sha512-SFCr4edNkZ1bGaLzGz7rgR1bRzVX4MmMxwsIa3/Bh6ose8v+hRpneoizHv0KChdjxaXyjRtaMq7sCuZSzPomQA==}
 
+  '@types/crypto-js@4.2.2':
+    resolution: {integrity: sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ==}
+
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
 
@@ -869,6 +884,9 @@ packages:
 
   crossws@0.3.4:
     resolution: {integrity: sha512-uj0O1ETYX1Bh6uSgktfPvwDiPYGQ3aI4qVsaC/LWpkIzGj1nUYm5FK3K+t11oOlpN01lGbprFCH4wBlKdJjVgw==}
+
+  crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
 
   cssesc@3.0.0:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
@@ -2180,6 +2198,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@astrojs/ts-plugin@1.10.4':
+    dependencies:
+      '@astrojs/compiler': 2.11.0
+      '@astrojs/yaml2ts': 0.2.2
+      '@jridgewell/sourcemap-codec': 1.5.0
+      '@volar/language-core': 2.4.12
+      '@volar/typescript': 2.4.12
+      semver: 7.7.1
+      vscode-languageserver-textdocument: 1.0.12
+
   '@astrojs/yaml2ts@0.2.2':
     dependencies:
       yaml: 2.7.1
@@ -2568,6 +2596,8 @@ snapshots:
 
   '@types/chroma-js@3.1.1': {}
 
+  '@types/crypto-js@4.2.2': {}
+
   '@types/debug@4.1.12':
     dependencies:
       '@types/ms': 2.1.0
@@ -2883,6 +2913,8 @@ snapshots:
   crossws@0.3.4:
     dependencies:
       uncrypto: 0.1.3
+
+  crypto-js@4.2.0: {}
 
   cssesc@3.0.0: {}
 

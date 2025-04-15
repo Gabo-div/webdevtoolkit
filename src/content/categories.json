@@ -12,5 +12,6 @@
   { "slug": "generator", "icon": "Cog" },
   { "slug": "image", "icon": "Image" },
   { "slug": "css", "icon": "Palette" },
-  { "slug": "tailwindcss", "icon": "Palette" }
+  { "slug": "tailwindcss", "icon": "Palette" },
+  { "slug": "hash", "icon": "Hash" }
 ]

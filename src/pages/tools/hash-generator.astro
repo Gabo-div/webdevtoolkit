@@ -1,0 +1,148 @@
+---
+import ToolLayout from "@/layouts/ToolLayout.astro";
+import Label from "@/components/starwind/label";
+import Textarea from "@/components/starwind/textarea";
+import Button from "@/components/starwind/button";
+import CopyButton from "@/components/CopyButton.astro";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectSeparator,
+} from "@/components/starwind/select";
+---
+
+<ToolLayout slug="hash-generator">
+  <div class="flex flex-1 flex-col space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div class="grid gap-2">
+        <Label for="algorithm">Algorithm</Label>
+        <Select id="algorithm">
+          <SelectTrigger class="w-full">
+            <SelectValue placeholder="MD5" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="md5">MD5</SelectItem>
+              <SelectSeparator />
+              <SelectItem value="sha1">SHA1</SelectItem>
+              <SelectItem value="sha224">SHA224</SelectItem>
+              <SelectItem value="sha256">SHA256</SelectItem>
+              <SelectItem value="sha384">SHA384</SelectItem>
+              <SelectItem value="sha512">SHA512</SelectItem>
+              <SelectSeparator />
+              <SelectItem value="keccak-224">Keccak-224</SelectItem>
+              <SelectItem value="keccak-256">Keccak-256</SelectItem>
+              <SelectItem value="keccak-384">Keccak-384</SelectItem>
+              <SelectItem value="keccak-512">Keccak-512</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+      <div class="grid gap-2">
+        <Label for="encoding">Output Encoding</Label>
+        <Select id="encoding">
+          <SelectTrigger class="w-full">
+            <SelectValue placeholder="Hex (Lower Case)" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="hex">Hex</SelectItem>
+              <SelectItem value="base64">Base64</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+
+    <div class="grid gap-2">
+      <Label for="input">Input</Label>
+      <Textarea rows={5} placeholder="Enter text to hash" id="input" />
+    </div>
+
+    <div class="flex items-center gap-2">
+      <Button id="generate">Generate</Button>
+    </div>
+
+    <div class="grid gap-2">
+      <Label for="output">Output</Label>
+      <div class="flex items-center gap-4">
+        <Textarea
+          rows={5}
+          readonly
+          placeholder="Generated hash will appear here"
+          id="output"
+          class="bg-zinc-100 dark:bg-zinc-900"
+        />
+        <CopyButton target="output" />
+      </div>
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  import CryptoJS from "crypto-js";
+  import type { SelectChangeEvent } from "@/components/starwind/select/SelectTypes";
+
+  const input = document.getElementById("input") as HTMLInputElement;
+  const output = document.getElementById("output") as HTMLInputElement;
+  const button = document.getElementById("generate") as HTMLButtonElement;
+  const algorithmSelect = document.getElementById(
+    "algorithm",
+  ) as HTMLDivElement;
+  const encodingSelect = document.getElementById("encoding") as HTMLDivElement;
+
+  let algorithm = "md5";
+  let encoding = "hex";
+
+  const hashFunctions: Record<
+    string,
+    (text: string) => CryptoJS.lib.WordArray
+  > = {
+    md5: (t) => CryptoJS.MD5(t),
+    sha1: (t) => CryptoJS.SHA1(t),
+    sha224: (t) => CryptoJS.SHA224(t),
+    sha256: (t) => CryptoJS.SHA256(t),
+    sha384: (t) => CryptoJS.SHA384(t),
+    sha512: (t) => CryptoJS.SHA512(t),
+    "keccak-224": (t) => CryptoJS.SHA3(t, { outputLength: 224 }),
+    "keccak-256": (t) => CryptoJS.SHA3(t, { outputLength: 256 }),
+    "keccak-384": (t) => CryptoJS.SHA3(t, { outputLength: 384 }),
+    "keccak-512": (t) => CryptoJS.SHA3(t, { outputLength: 512 }),
+  };
+
+  const encodingFunctions: Record<string, typeof CryptoJS.enc.Hex> = {
+    hex: CryptoJS.enc.Hex,
+    base64: CryptoJS.enc.Base64,
+  };
+
+  const generateHash = () => {
+    if (!(algorithm in hashFunctions)) {
+      throw Error("Invalid algorithm");
+    }
+
+    if (!(encoding in encodingFunctions)) {
+      throw Error("Invalid encoding");
+    }
+
+    const text = input.value;
+    const hash = hashFunctions[algorithm](text);
+    const stringHash = hash.toString(encodingFunctions[encoding]);
+    output.value = stringHash;
+  };
+
+  algorithmSelect.addEventListener("starwind-select:change", (event) => {
+    const e = event as SelectChangeEvent;
+    algorithm = e.detail.value;
+  });
+
+  encodingSelect.addEventListener("starwind-select:change", (event) => {
+    const e = event as SelectChangeEvent;
+    encoding = e.detail.value;
+  });
+
+  button.addEventListener("click", generateHash);
+</script>
